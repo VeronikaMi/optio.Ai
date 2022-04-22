@@ -1,1 +1,19 @@
-<p>dashboard works!</p>
+<!-- 3 graphs and 1 table -->
+<div class="container">
+  <h1>Dashboard</h1>
+  <div class="charts">
+    <div class="charts-long">
+      <div
+        echarts
+        [options]="chartOptions['heatMap']"
+        class="chart heatmap"
+      ></div>
+      <div
+        echarts
+        [options]="chartOptions['heatMap']"
+        class="chart ring-chart"
+      ></div>
+    </div>
+    <div echarts [options]="chartOptions['donut']" class="chart donut"></div>
+  </div>
+</div>

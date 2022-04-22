@@ -3,3 +3,14 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+body {
+  background-color: #efefef;
+}
+
+.container {
+  width: calc(100vw - 10rem);
+  margin-left: auto;
+  margin-right: 0;
+  padding: 1rem 1.5rem;
+}

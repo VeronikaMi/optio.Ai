@@ -1,0 +1,27 @@
+.container {
+  h1 {
+    color: #2b2755;
+  }
+
+  .chart {
+    height: 300px;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    margin: 1rem;
+  }
+
+  .charts {
+    display: flex;
+    width: 100%;
+    .charts-long {
+      height: 50vh;
+      width: 70%;
+    }
+
+    .donut {
+      width: 30%;
+      margin-left: 2rem;
+    }
+  }
+}

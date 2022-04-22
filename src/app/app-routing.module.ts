@@ -4,13 +4,13 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { TableComponent } from './pages/table/table.component';
 
 const routes: Routes = [
-  {path:'dashboard', component:DashboardComponent},
-  {path:'table', component:TableComponent},
-  {path:'**', redirectTo:'dashboard'}
+  { path: 'dashboard', component: DashboardComponent },
+  { path: 'table', component: TableComponent },
+  { path: '**', redirectTo: 'dashboard' },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
