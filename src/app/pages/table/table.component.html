@@ -1,3 +1,71 @@
 <div class="container">
-  <p>table works!</p>
+  <div class="customize">
+    <form #f="ngForm" (ngSubmit)="onFormSubmit(f)">
+      <label for="gteDate">From</label>
+      <input
+        [ngModel]="this.params.gteDate"
+        id="gteDate"
+        type="date"
+        name="gteDate"
+      />
+      <label for="lteDate">To</label>
+      <input
+        [ngModel]="this.params.lteDate"
+        id="lteDate"
+        type="date"
+        name="lteDate"
+      />
+      <label for="itemNumber">Item Per Page</label>
+      <input
+        [ngModel]="this.params.pageSize"
+        id="lteDate"
+        type="number"
+        name="itemNumber"
+      />
+      <button type="submit" class="btn">Customize Table</button>
+    </form>
+  </div>
+  <table>
+    <tr (click)="onSort($event.target)">
+      <th id="dimension" [ngClass]="{ active: activeSort === 'dimension' }">
+        Dimension
+      </th>
+      <th id="date" [ngClass]="{ active: activeSort === 'date' }">Date</th>
+      <th id="quantity" [ngClass]="{ active: activeSort === 'quantity' }">
+        Quantity
+      </th>
+      <th id="volume" [ngClass]="{ active: activeSort === 'volume' }">
+        Volume (GEL)
+      </th>
+      <th id="average" [ngClass]="{ active: activeSort === 'average' }">
+        Average (GEL)
+      </th>
+      <th
+        id="differenceQuantity"
+        [ngClass]="{ active: activeSort === 'differenceQuantity' }"
+      >
+        Difference quantity
+      </th>
+      <th
+        id="differenceVolume"
+        [ngClass]="{ active: activeSort === 'differenceVolume' }"
+      >
+        Difference volume
+      </th>
+    </tr>
+    <tr *ngFor="let fact of displayedTableInfo">
+      <td>{{ fact.dimension }}</td>
+      <td>{{ fact.date }}</td>
+      <td>{{ fact.quantity }}</td>
+      <td>{{ fact.volume.toFixed(2) }}</td>
+      <td>{{ fact.average.toFixed(2) }}</td>
+      <td>{{ fact.differenceQuantity }}</td>
+      <td>{{ fact.differenceVolume }}</td>
+    </tr>
+  </table>
+  <div class="pagination">
+    <ul>
+      <li><a></a></li>
+    </ul>
+  </div>
 </div>

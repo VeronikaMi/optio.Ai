@@ -20,21 +20,26 @@ export interface FINDS {
 
 export interface FACTS {
   dimension: string;
-  dimensionId: string;
+  dimensionId?: string;
   volume: number;
   quantity: number;
   average: number;
 }
 
 export interface FACTS_DETAILS extends FACTS {
-  source: string;
-  kind: string;
+  source?: string;
+  kind?: string;
   date: string;
-  type: number;
+  type?: number;
   differenceQuantity: number;
-  differenceQuantityPersent: number;
+  differenceQuantityPersent?: number;
   differenceVolume: number;
-  differenceVolumePersent: number;
-  differenceAverage: number;
-  differenceAveragePersent: number;
+  differenceVolumePersent?: number;
+  differenceAverage?: number;
+  differenceAveragePersent?: number;
 }
+
+export type FactsResponse = {
+  total: number;
+  entities: FACTS_DETAILS[];
+};

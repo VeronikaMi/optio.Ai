@@ -9,6 +9,7 @@ import { TableComponent } from './pages/table/table.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { NgxEchartsModule } from 'ngx-echarts';
 import * as echarts from 'echarts';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import * as echarts from 'echarts';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    FormsModule,
     NgxEchartsModule.forRoot({ echarts }),
   ],
   providers: [],

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable, tap } from 'rxjs';
-import { AGGREGATE, FACTS, FINDS } from '../interfaces';
+import { AGGREGATE, FACTS, FactsResponse, FINDS } from '../interfaces';
 
 const API: string =
   'https://api.next.insight.optio.ai/api/v2/analytics/transactions/facts/';
@@ -18,9 +18,9 @@ export class ApiService {
       .pipe(map((data: { data: FACTS[] }) => ({ ...data.data })));
   }
 
-  public findFactsBy(params: FINDS) {
+  public findFactsBy(params: FINDS): Observable<FactsResponse> {
     return this.http
-      .post<{ data: FINDS[] }>(`${API}find`, params)
-      .pipe(map((data: { data: FINDS[] }) => ({ ...data.data })));
+      .post(`${API}find`, params)
+      .pipe(map((data: any) => ({ ...data.data })));
   }
 }
