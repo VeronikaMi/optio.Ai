@@ -1,8 +1,23 @@
 <!-- 3 graphs and 1 table -->
 <div class="container">
   <h1>Dashboard</h1>
-  <div class="charts">
-    <div class="charts-long">
+  <div class="dashboard">
+    <div class="left">
+      <div echarts [options]="chartOptions['donut']" class="chart donut"></div>
+      <table class="table">
+        <tr>
+          <th>Number</th>
+          <th>Merchant</th>
+          <th>Spending</th>
+        </tr>
+        <tr *ngFor="let merchant of topMerchants; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ merchant.dimension | uppercase }}</td>
+          <td>{{ merchant.volume.toFixed(2) }}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="right">
       <div
         echarts
         [options]="chartOptions['heatMap']"
@@ -10,10 +25,9 @@
       ></div>
       <div
         echarts
-        [options]="chartOptions['heatMap']"
-        class="chart ring-chart"
+        [options]="chartOptions['line']"
+        class="chart line-chart"
       ></div>
     </div>
-    <div echarts [options]="chartOptions['donut']" class="chart donut"></div>
   </div>
 </div>
