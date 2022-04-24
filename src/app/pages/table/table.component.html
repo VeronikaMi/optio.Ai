@@ -28,28 +28,28 @@
   </div>
   <table>
     <tr (click)="onSort($event.target)">
-      <th id="dimension" [ngClass]="{ active: activeSort === 'dimension' }">
+      <th id="dimension" [ngClass]="{ active: params.sortBy === 'dimension' }">
         Dimension
       </th>
-      <th id="date" [ngClass]="{ active: activeSort === 'date' }">Date</th>
-      <th id="quantity" [ngClass]="{ active: activeSort === 'quantity' }">
+      <th id="date" [ngClass]="{ active: params.sortBy === 'date' }">Date</th>
+      <th id="quantity" [ngClass]="{ active: params.sortBy === 'quantity' }">
         Quantity
       </th>
-      <th id="volume" [ngClass]="{ active: activeSort === 'volume' }">
+      <th id="volume" [ngClass]="{ active: params.sortBy === 'volume' }">
         Volume (GEL)
       </th>
-      <th id="average" [ngClass]="{ active: activeSort === 'average' }">
+      <th id="average" [ngClass]="{ active: params.sortBy === 'average' }">
         Average (GEL)
       </th>
       <th
         id="differenceQuantity"
-        [ngClass]="{ active: activeSort === 'differenceQuantity' }"
+        [ngClass]="{ active: params.sortBy === 'differenceQuantity' }"
       >
         Difference quantity
       </th>
       <th
         id="differenceVolume"
-        [ngClass]="{ active: activeSort === 'differenceVolume' }"
+        [ngClass]="{ active: params.sortBy === 'differenceVolume' }"
       >
         Difference volume
       </th>

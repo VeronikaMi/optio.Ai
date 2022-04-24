@@ -39,6 +39,16 @@ export interface FACTS_DETAILS extends FACTS {
   differenceAveragePersent?: number;
 }
 
+export interface TABLE_DATA {
+  dimension: string;
+  date: string;
+  quantity: number;
+  volume: number;
+  average: number;
+  differenceQuantity: number;
+  differenceVolume: number;
+}
+
 export type FactsResponse = {
   total: number;
   entities: FACTS_DETAILS[];

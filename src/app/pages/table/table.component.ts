@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { FactsResponse, FINDS } from 'src/app/interfaces';
+import { Subscription } from 'rxjs';
+import { FactsResponse, FINDS, TABLE_DATA } from 'src/app/interfaces';
 import { ApiService } from 'src/app/services/api.service';
 
 @Component({
@@ -8,7 +9,7 @@ import { ApiService } from 'src/app/services/api.service';
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],
 })
-export class TableComponent implements OnInit {
+export class TableComponent implements OnInit, OnDestroy {
   public params: FINDS = {
     dimension: 'category',
     types: ['income'],
@@ -29,10 +30,9 @@ export class TableComponent implements OnInit {
     ],
   };
 
-  public pagesNumber: any;
   public pages: number[] = [];
-  public displayedTableInfo: any;
-  public activeSort: string = this.params.sortBy;
+  public displayedTableInfo: TABLE_DATA[] = [];
+  public subscription: Subscription = new Subscription();
 
   constructor(private apiService: ApiService) {}
 
@@ -44,16 +44,27 @@ export class TableComponent implements OnInit {
     this.getFactsBy(this.params);
   }
 
-  public onSort(el: any) {
-    if (el.id !== this.activeSort) {
-      this.activeSort = el.id;
-      this.displayedTableInfo = this.sortTableBy();
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
-
-    localStorage.setItem('sortBy', JSON.stringify(this.activeSort));
   }
 
-  public onFormSubmit(form: NgForm) {
+  public onSort(el: any): void {
+    if (
+      el.id !== this.params.sortBy ||
+      (el.id === this.params.sortBy && this.params.sortDirection === 'desc')
+    ) {
+      this.params = { ...this.params, sortBy: el.id, sortDirection: 'asc' };
+    } else {
+      this.params = { ...this.params, sortBy: el.id, sortDirection: 'desc' };
+    }
+    this.getFactsBy(this.params);
+
+    localStorage.setItem('params', JSON.stringify(this.params));
+  }
+
+  public onFormSubmit(form: NgForm): void {
     if (form.touched) {
       this.params = {
         ...this.params,
@@ -67,19 +78,21 @@ export class TableComponent implements OnInit {
     }
   }
 
-  public onPageClick(pageIndex: number) {
+  public onPageClick(pageIndex: number): void {
     this.params = { ...this.params, pageIndex: pageIndex };
     localStorage.setItem('params', JSON.stringify(this.params));
     this.getFactsBy(this.params);
   }
 
-  public resetTable() {
+  public resetTable(): void {
     this.params = {
       ...this.params,
       pageIndex: 0,
       pageSize: 10,
       gteDate: '2018-01-01',
       lteDate: '2018-01-31',
+      sortBy: 'date',
+      sortDirection: 'asc',
     };
 
     localStorage.setItem('params', JSON.stringify(this.params));
@@ -87,33 +100,18 @@ export class TableComponent implements OnInit {
   }
 
   private getFactsBy(params: FINDS): void {
-    this.apiService.findFactsBy(params).subscribe((response: FactsResponse) => {
-      this.pagesNumber = Math.ceil(response.total / this.params.pageSize);
-      this.displayedTableInfo = response.entities.map((item: any) => ({
-        ...item,
-        date: item.date.substring(0, 10).split('-').reverse().join('/'),
-      }));
+    this.subscription = this.apiService
+      .findFactsBy(params)
+      .subscribe((response: FactsResponse) => {
+        const pagesNumber = Math.ceil(response.total / this.params.pageSize);
+        this.displayedTableInfo = response.entities.map((item: TABLE_DATA) => ({
+          ...item,
+          date: item.date.substring(0, 10).split('-').reverse().join('/'),
+        }));
 
-      this.pages = new Array(this.pagesNumber)
-        .fill(0)
-        .map((el, i) => (el = i + 1));
-
-      if (localStorage.getItem('sortBy')) {
-        this.activeSort = JSON.parse(localStorage.getItem('sortBy')!);
-        this.displayedTableInfo = this.sortTableBy();
-      }
-    });
-  }
-
-  private sortTableBy() {
-    if (this.activeSort !== 'dimension' && this.activeSort !== 'date') {
-      return this.displayedTableInfo.sort(
-        (a: any, b: any) => a[this.activeSort] - b[this.activeSort]
-      );
-    } else {
-      return this.displayedTableInfo.sort((a: any, b: any) =>
-        a[this.activeSort].localeCompare(b[this.activeSort])
-      );
-    }
+        this.pages = new Array(pagesNumber)
+          .fill(0)
+          .map((el, i) => (el = i + 1));
+      });
   }
 }
