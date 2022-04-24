@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { FactsResponse, FACTS_DETAILS, FINDS } from 'src/app/interfaces';
+import { FactsResponse, FINDS } from 'src/app/interfaces';
 import { ApiService } from 'src/app/services/api.service';
 
 @Component({
@@ -32,7 +32,7 @@ export class TableComponent implements OnInit {
   public pagesNumber: any;
   public pages: number[] = [];
   public displayedTableInfo: any;
-  public activeSort: string = 'none';
+  public activeSort: string = this.params.sortBy;
 
   constructor(private apiService: ApiService) {}
 
@@ -67,20 +67,40 @@ export class TableComponent implements OnInit {
     }
   }
 
+  public onPageClick(pageIndex: number) {
+    this.params = { ...this.params, pageIndex: pageIndex };
+    localStorage.setItem('params', JSON.stringify(this.params));
+    this.getFactsBy(this.params);
+  }
+
+  public resetTable() {
+    this.params = {
+      ...this.params,
+      pageIndex: 0,
+      pageSize: 10,
+      gteDate: '2018-01-01',
+      lteDate: '2018-01-31',
+    };
+
+    localStorage.setItem('params', JSON.stringify(this.params));
+    this.getFactsBy(this.params);
+  }
+
   private getFactsBy(params: FINDS): void {
     this.apiService.findFactsBy(params).subscribe((response: FactsResponse) => {
-      const total: number = response.total;
-      this.pagesNumber = Math.ceil(total / this.params.pageSize);
-      this.displayedTableInfo = response.entities;
-      this.displayedTableInfo = this.displayedTableInfo.map((item: any) => ({
+      this.pagesNumber = Math.ceil(response.total / this.params.pageSize);
+      this.displayedTableInfo = response.entities.map((item: any) => ({
         ...item,
         date: item.date.substring(0, 10).split('-').reverse().join('/'),
       }));
 
+      this.pages = new Array(this.pagesNumber)
+        .fill(0)
+        .map((el, i) => (el = i + 1));
+
       if (localStorage.getItem('sortBy')) {
         this.activeSort = JSON.parse(localStorage.getItem('sortBy')!);
         this.displayedTableInfo = this.sortTableBy();
-        console.log(this.displayedTableInfo);
       }
     });
   }

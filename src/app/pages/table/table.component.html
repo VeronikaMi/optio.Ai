@@ -24,6 +24,7 @@
       />
       <button type="submit" class="btn">Customize Table</button>
     </form>
+    <button class="btn reset" (click)="resetTable()">Reset</button>
   </div>
   <table>
     <tr (click)="onSort($event.target)">
@@ -65,7 +66,13 @@
   </table>
   <div class="pagination">
     <ul>
-      <li><a></a></li>
+      <li
+        *ngFor="let page of pages; let i = index"
+        (click)="onPageClick(i)"
+        [ngClass]="{ active: this.params.pageIndex === i }"
+      >
+        <a>{{ page }}</a>
+      </li>
     </ul>
   </div>
 </div>

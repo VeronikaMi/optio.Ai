@@ -1,9 +1,12 @@
 .container {
   .customize {
-    form {
-      margin-top: 1rem;
-      margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
 
+    form {
       label {
         font-size: 1.2rem;
         color: #2b2755;
@@ -21,25 +24,10 @@
           outline: none;
         }
       }
+    }
 
-      .btn {
-        color: #fff;
-        font-size: 1.2rem;
-        padding: 0.7rem 1rem;
-        font-weight: 600;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        background: linear-gradient(
-          146deg,
-          rgba(232, 93, 117, 1) 0%,
-          rgba(255, 156, 173, 1) 100%
-        );
-        box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-
-        &:hover {
-        }
-      }
+    .reset {
+      background: linear-gradient(146deg, #2b2755 0%, #7771b4 100%);
     }
   }
   table {
@@ -53,6 +41,7 @@
 
     th,
     td {
+      transition: all 0.3s ease-in;
       border-bottom: 1px solid #2b2755;
     }
 
@@ -75,6 +64,33 @@
 
     tr:last-child td {
       border-bottom: none;
+    }
+  }
+
+  .pagination {
+    ul {
+      list-style: none;
+      display: flex;
+      width: fit-content;
+      margin: 2rem auto;
+      color: #2b2755;
+
+      li {
+        transition: all 0.3s ease-in;
+        a {
+          padding: 0.4rem;
+          font-size: 1.5rem;
+          text-shadow: 2px 2px 4px rgba(149, 157, 165, 0.6);
+        }
+
+        &:hover {
+          cursor: pointer;
+          color: lighten($color: #2b2755, $amount: 17%);
+        }
+      }
+      .active {
+        color: rgb(248, 125, 145);
+      }
     }
   }
 }
