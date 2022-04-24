@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AGGREGATE, FACTS, FINDS } from 'src/app/interfaces';
 import { ApiService } from 'src/app/services/api.service';
-import { EChartsOption } from 'echarts';
+import { EChartsOption, SeriesOption } from 'echarts';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -53,6 +53,7 @@ export class DashboardComponent implements OnInit {
   };
 
   public topMerchants!: FACTS[];
+  public income: any;
 
   constructor(private apiService: ApiService) {}
 
@@ -157,170 +158,122 @@ export class DashboardComponent implements OnInit {
     this.apiService
       .aggregateTransactionFactsBy(this.popularMerchants)
       .subscribe((response: FACTS[]) => {
-        console.log(Object.values(response));
         const sortedMerchants = Object.values(response).sort(
           (a, b) => b.volume - a.volume
         );
         this.topMerchants = sortedMerchants.slice(0, 20);
-        console.log(this.topMerchants);
       });
 
     // do{}while(this.incomeByDate.pageIndex <= lastPage);?
-    // this.apiService
-    //   .findFactsBy(this.incomeByDate)
-    //   .subscribe((response: any) => {
-    //     console.log(response);
-    //     let income = response.entities;
-    //     const lastPage = Math.ceil((response.total - 50) / 50);
-    //     this.incomeByDate.pageIndex++;
-    //     const categories: string[] = [];
-    //     const days: string[] = [];
+    this.apiService
+      .findFactsBy(this.incomeByDate)
+      .subscribe((response: any) => {
+        console.log(response);
+        this.income = response.entities.map((fact: any) => ({
+          ...fact,
+          date: fact.date.substring(8, 10),
+        }));
+        const lastPage = Math.ceil((response.total - 50) / 50);
+        this.incomeByDate.pageIndex++;
+        const categories: string[] = [];
+        const days: string[] = [];
 
-    //     for (
-    //       ;
-    //       this.incomeByDate.pageIndex <= lastPage;
-    //       ++this.incomeByDate.pageIndex
-    //     ) {
-    //       this.apiService
-    //         .findFactsBy(this.incomeByDate)
-    //         .subscribe((response2: any) => {
-    //           income.push(...response2.entities);
+        for (
+          ;
+          this.incomeByDate.pageIndex <= lastPage;
+          ++this.incomeByDate.pageIndex
+        ) {
+          this.apiService
+            .findFactsBy(this.incomeByDate)
+            .subscribe((response2: any) => {
+              this.income.push(
+                ...response2.entities.map((fact: any) => ({
+                  ...fact,
+                  date: fact.date.substring(8, 10),
+                }))
+              );
 
-    //           // console.log(
-    //           income = income.map((fact: any) => ({
-    //             ...fact,
-    //             date: fact.date.substring(8, 10),
-    //           }));
-    //           // );
-    //           console.log(income);
-    //           let volumes = Array(31).fill(0);
-    //           const salary = income.filter(
-    //             (fact: any) => fact.dimension === 'Salary'
-    //           );
-    //           console.log(salary);
+              this.income.map(
+                (income: any) =>
+                  !days.includes(income.date.substring(0, 10)) &&
+                  days.push(income.date.substring(0, 10))
+              );
 
-    //           days.forEach((day: string) => {});
+              this.income.map(
+                (income: any) =>
+                  !categories.includes(income.dimension) &&
+                  categories.push(income.dimension)
+              );
 
-    //           income.map(
-    //             (income: any) =>
-    //               !categories.includes(income.dimension) &&
-    //               categories.push(income.dimension)
-    //           );
+              this.chartOptions['line'] = {
+                title: {
+                  top: 10,
+                  left: '5',
+                  text: 'Income',
+                  textStyle: {
+                    color: '#2b2755',
+                  },
+                },
+                tooltip: {
+                  trigger: 'axis',
+                  axisPointer: {
+                    type: 'cross',
+                    label: {
+                      backgroundColor: '#6a7985',
+                    },
+                  },
+                },
+                legend: {
+                  top: 10,
+                  data: categories,
+                },
+                grid: {
+                  left: '3%',
+                  right: '4%',
+                  bottom: '3%',
+                  containLabel: true,
+                },
+                xAxis: [
+                  {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: days,
+                  },
+                ],
+                yAxis: [
+                  {
+                    type: 'value',
+                  },
+                ],
+                series: categories.map((category: string) => ({
+                  name: category,
+                  type: 'line',
+                  stack: 'Total',
+                  emphasis: {
+                    focus: 'series',
+                  },
+                  data: this.structureDataForChart(days, category, this.income),
+                })),
+              };
+            });
+        }
+      });
+  }
 
-    //           income.map(
-    //             (income: any) =>
-    //               !days.includes(income.date.substring(0, 10)) &&
-    //               days.push(income.date.substring(0, 10))
-    //           );
+  private structureDataForChart(
+    numberOfDays: string[],
+    category: string,
+    data: any
+  ) {
+    let volumes = Array(numberOfDays.length).fill(0);
+    const filteredCategory = data.filter(
+      (fact: any) => fact.dimension === category
+    );
+    filteredCategory.forEach((item: any) => {
+      let dayIndex = parseInt(item.date) - 1;
+      volumes[dayIndex] = item.volume;
+    });
 
-    //           this.chartOptions['line'] = {
-    //             title: {
-    //               text: 'Income',
-    //               textStyle: {
-    //                 color: '#2b2755',
-    //               },
-    //             },
-    //             tooltip: {
-    //               trigger: 'axis',
-    //               axisPointer: {
-    //                 type: 'cross',
-    //                 label: {
-    //                   backgroundColor: '#6a7985',
-    //                 },
-    //               },
-    //             },
-    //             legend: {
-    //               data: categories,
-    //             },
-    //             grid: {
-    //               left: '3%',
-    //               right: '4%',
-    //               bottom: '3%',
-    //               containLabel: true,
-    //             },
-    //             xAxis: [
-    //               {
-    //                 type: 'category',
-    //                 boundaryGap: false,
-    //                 data: days,
-    //               },
-    //             ],
-    //             yAxis: [
-    //               {
-    //                 type: 'value',
-    //               },
-    //             ],
-    //             series: [
-    //               // categories.forEach((category:string)=>(
-    //               //   {
-    //               //     name: category,
-    //               //     data: income.map(
-    //               //       (fact: any) =>
-    //               //         fact.dimension === category && fact.volume
-    //               //     ),
-    //               //   }
-    //               // ))
-    //               {
-    //                 name: categories[0],
-    //                 type: 'line',
-    //                 stack: 'Total',
-    //                 areaStyle: {},
-    //                 emphasis: {
-    //                   focus: 'series',
-    //                 },
-    //                 data: income.map(
-    //                   (fact: any) =>
-    //                     fact.dimension === categories[0] && fact.volume
-    //                 ),
-    //               },
-    //               {
-    //                 name: 'Union Ads',
-    //                 type: 'line',
-    //                 stack: 'Total',
-    //                 areaStyle: {},
-    //                 emphasis: {
-    //                   focus: 'series',
-    //                 },
-    //                 data: [220, 182, 191, 234, 290, 330, 310],
-    //               },
-    //               {
-    //                 name: 'Video Ads',
-    //                 type: 'line',
-    //                 stack: 'Total',
-    //                 areaStyle: {},
-    //                 emphasis: {
-    //                   focus: 'series',
-    //                 },
-    //                 data: [150, 232, 201, 154, 190, 330, 410],
-    //               },
-    //               {
-    //                 name: 'Direct',
-    //                 type: 'line',
-    //                 stack: 'Total',
-    //                 areaStyle: {},
-    //                 emphasis: {
-    //                   focus: 'series',
-    //                 },
-    //                 data: [320, 332, 301, 334, 390, 330, 320],
-    //               },
-    //               {
-    //                 name: 'Search Engine',
-    //                 type: 'line',
-    //                 stack: 'Total',
-    //                 label: {
-    //                   show: true,
-    //                   position: 'top',
-    //                 },
-    //                 areaStyle: {},
-    //                 emphasis: {
-    //                   focus: 'series',
-    //                 },
-    //                 data: [820, 932, 901, 934, 1290, 1330, 1320],
-    //               },
-    //             ],
-    //           };
-    //         });
-    //     }
-    //   });
+    return volumes;
   }
 }
