@@ -1,8 +1,5 @@
 .container {
   .customize {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     margin-top: 1rem;
     margin-bottom: 2rem;
 
@@ -27,6 +24,7 @@
     }
 
     .reset {
+      margin-left: 1rem;
       background: linear-gradient(146deg, #2b2755 0%, #7771b4 100%);
     }
   }
@@ -91,6 +89,19 @@
       .active {
         color: rgb(248, 125, 145);
       }
+    }
+  }
+}
+
+@media (max-width: 1400px) {
+  form {
+    & > *:not(button) {
+      display: block;
+      margin-bottom: 0.6rem;
+    }
+
+    .reset {
+      margin-left: 0.6rem;
     }
   }
 }

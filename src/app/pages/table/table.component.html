@@ -23,8 +23,8 @@
         name="itemNumber"
       />
       <button type="submit" class="btn">Customize Table</button>
+      <button class="btn reset" (click)="resetTable()">Reset</button>
     </form>
-    <button class="btn reset" (click)="resetTable()">Reset</button>
   </div>
   <table>
     <tr (click)="onSort($event.target)">
