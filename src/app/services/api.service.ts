@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable, tap } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { AGGREGATE, FACTS, FactsResponse, FINDS } from '../interfaces';
 
 const API: string =
